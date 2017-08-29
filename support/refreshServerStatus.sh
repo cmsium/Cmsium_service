@@ -1,3 +1,3 @@
 #!/usr/bin/env bash
-cd /home/nick/cmsium/Cmsium_service/
+cd /home/nick/cmsium/service/
 php /support/refreshServerStatus.php
