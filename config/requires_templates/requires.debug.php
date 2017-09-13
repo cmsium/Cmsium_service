@@ -8,3 +8,4 @@ require_once ROOTDIR.'/lib/validation/Validator.php';
 require_once ROOTDIR.'/lib/service_actions.php';
 require_once ROOTDIR.'/lib/service_lib.php';
 require_once ROOTDIR.'/lib/connection.php';
+require_once ROOTDIR.'/lib/HeadersController.php';
