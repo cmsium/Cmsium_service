@@ -9,7 +9,7 @@ if ($URL === false){
 }
 $exp = explode('?',$URL);
 $action = substr(array_shift($exp),1);
-$params = $_GET;
+$params = $_GET+$_POST;
 unset($params['index_php']);
 unset($params[$action]);
 $params = array_values($params);

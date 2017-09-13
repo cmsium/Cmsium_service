@@ -5,7 +5,7 @@ create table file_servers
 	server_name varchar(255) not null,
 	path varchar(255) not null,
 	status tinyint null,
-	free_disk_space bigint null,
+	disk_space bigint null,
 	constraint file_servers_server_id_uindex
 		unique (server_id),
 	constraint file_servers_path_uindex
@@ -19,5 +19,5 @@ CREATE PROCEDURE getFileServerData()
 
 CREATE PROCEDURE changeFileServerData(IN ServerId VARCHAR(32), IN ServerStatus TINYINT, IN FreeSpace FLOAT)
   BEGIN
-    UPDATE file_servers SET status=ServerStatus, free_disk_space=FreeSpace WHERE server_id=ServerId;
+    UPDATE file_servers SET status=ServerStatus, disk_space=FreeSpace WHERE server_id=ServerId;
   END;

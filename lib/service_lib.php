@@ -1,11 +1,22 @@
 <?php
-function registerFileServer($server_config_path){
-    $server_name = Config::get('server_name',$server_config_path);
-    $path = Config::get('path',$server_config_path);
+function registerFileServer($server_config_path,$data=false){
+    if ($data){
+        $server_name = $data['name'];
+        $path = $data['path'];
+    } else {
+        $server_name = Config::get('server_name', $server_config_path);
+        $path = Config::get('path', $server_config_path);
+    }
     $conn = DBConnection::getInstance();
     $server_id = md5($server_name.$path);
-    $query = "INSERT INTO file_servers (server_id, server_name, path, status, free_disk_space) VALUES
-              ('$server_id','$server_name','$path',0,0)";
+    $query = "INSERT INTO file_servers (server_id, server_name, path, status, disk_space) VALUES
+              ('$server_id','$server_name','$path',1,0)";
+    return $conn->performQuery($query);
+}
+
+function unregisterFileServer($server_id){
+    $conn = DBConnection::getInstance();
+    $query = "DELETE FROM file_servers WHERE server_id='$server_id'";
     return $conn->performQuery($query);
 }
 
@@ -24,17 +35,18 @@ function changeFileServerData($server_id,$status,$space){
 
 function refreshServerStatus(){
     $servers = getAllFileServers();
-    foreach ($servers as $server){
+    foreach ($servers as &$server){
         $result = sendRequest("{$server['path']}/serverStatus",'GET',null,null);
         if ($result['status'] == 'ok'){
-            $status = 1;
-            $free_disk_space = $result['free_disk_space'];
+            $server['status'] = 1;
+            $server['free_disk_space'] = $result['free_disk_space'];
         } else {
-            $status = 0;
-            $free_disk_space = null;
+            $server['status'] = 0;
+            $server['free_disk_space'] = null;
         }
-        changeFileServerData($server['server_id'],$status,$free_disk_space);
+        changeFileServerData($server['server_id'],$server['status'],$server['free_disk_space']);
     }
+    return $servers;
 }
 
 function getAllControllerFiles(){
@@ -64,7 +76,7 @@ function getAllServersFiles(){
     return $server_names;
 }
 
-function checkFilesConformity(){
+function checkFilesConformity($echo = false){
     $controller_files = getAllControllerFiles();
     $server_files = getAllServersFiles();
     if (!$controller_files or !$server_files)
@@ -83,5 +95,8 @@ function checkFilesConformity(){
                 sendRequest("$server/deleteFile?path=$path", 'GET', null, null);
             }
         }
+    }
+    if ($echo){
+        echo "Clear complete";
     }
 }

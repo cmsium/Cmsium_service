@@ -15,3 +15,28 @@ function sendFile($URL,$file_path){
     curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
     return json_decode(curl_exec($curl),true);
 }
+
+function checkAuth(){
+    if (!isset($_COOKIE['token'])) {
+        $header = HeadersController::getInstance();
+        $auth = Config::get('auth_url');
+        $host = Config::get('host_url');
+        $back = urlencode("http://$host".$_SERVER['REQUEST_URI']);
+        $url = "http://$auth?redirect_uri=$back";
+        $header->respondLocation(['value'=>$url]);
+        exit;
+    } else {
+        $auth = Config::get('auth_url');
+        $authcheck = sendRequest("$auth/token/check",'POST','Content-type: application/x-www-form-urlencoded',http_build_query(['token'=>$_COOKIE['token']]));
+        switch ($authcheck['is_valid']){
+            case true: return $authcheck['user_id'];break;
+            case false:
+                $header = HeadersController::getInstance();
+                $host = Config::get('host_url');
+                $back = urlencode("http://$host".$_SERVER['REQUEST_URI']);
+                $url = "http://$auth?redirect_uri=$back";
+                $header->respondLocation(['value'=>$url]);
+                exit;
+        }
+    }
+}
