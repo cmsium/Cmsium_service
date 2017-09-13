@@ -17,8 +17,10 @@ function getAllFiles(){
         return false;
     array_shift($result);
     $str =  "<html><body><table><tr><td>file id</td><td>file name</td><td>file path</td></tr>";
-    foreach ($result as $file){
-        $str .= "<tr><td>{$file['file_id']}</td><td>{$file['file_name']}</td><td>{$file['path']}</td><td><a href='http://$controller/get?id={$file['file_id']}'>скачать</a></td><td><a href='http://$controller/delete?id={$file['file_id']}'>удалить</a></td><td><a href='http://$host_url/moveFilePage?id={$file['file_id']}&path={$file['path']}'>переместить</a></td></tr>";
+    if (!empty($result)) {
+        foreach ($result as $file) {
+            $str .= "<tr><td>{$file['file_id']}</td><td>{$file['file_name']}</td><td>{$file['path']}</td><td><a href='http://$controller/get?id={$file['file_id']}'>скачать</a></td><td><a href='http://$controller/delete?id={$file['file_id']}'>удалить</a></td><td><a href='http://$host_url/moveFilePage?id={$file['file_id']}&path={$file['path']}'>переместить</a></td></tr>";
+        }
     }
     $str .=  "</table></body></html>";
     echo $str;
