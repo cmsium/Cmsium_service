@@ -12,10 +12,7 @@ function getAllFiles(){
     checkAuth();
     $controller = Config::get('controller_url');
     $host_url = Config::get('host_url');
-    $result = sendRequest("$controller/getAllFiles?columns=file_id.path.file_name",'GET',null,null);
-    if ($result['status'] == 'error')
-        return false;
-    array_shift($result);
+    $result = sendRequestJSON("$controller/getAllFiles?columns=file_id.path.file_name",'GET',null,null);
     $str =  "<html><body><table><tr><td>file id</td><td>file name</td><td>file path</td></tr>";
     if (!empty($result)) {
         foreach ($result as $file) {
@@ -68,21 +65,10 @@ function moveFile($file_id,$from,$to){
     $server = $exp[0];
     $path = $exp[1];
     $response = sendRequest("$server/moveFile?server=$to&file=$path",'GET',null,null);
-    //TODO no json
-    switch ($response['status']){
-        case 'error':
-            echo json_encode(["status" => "error", "message" => $response['message']]);
-            exit;
-        case 'ok':
-            $new_path = $response['file_path'];
-    }
+    $new_path = $response;
     $controller = Config::get('controller_url');
-    $response = sendRequest("$controller/updateData?file_id=$file_id&path=$new_path",'GET',null,null);
-    switch ($response['status']) {
-        case 'error':
-            echo json_encode(["status" => "error", "message" => $response['message']]);
-            exit;
-    }
+    sendRequest("$controller/updateData?file_id=$file_id&path=$new_path",'GET',null,null);
+
 }
 
 
@@ -106,10 +92,7 @@ function getServerFiles($server){
     if ($server === false){
         throwException(DATA_FORMAT_ERROR);
     }
-    $result = sendRequest("$server/getAllFiles",'GET',null,null);
-    if ($result['status'] == 'error')
-        return false;
-    array_shift($result);
+    $result = sendRequestJSON("$server/getAllFiles",'GET',null,null);
     $str =  "<html><body><table><tr><td>file path</td></tr>";
     foreach ($result as $file){
         $str .= "<tr><td>$file</td><td><a href='http://$server/deleteFile?path=$file'>delete</a></td></tr>";

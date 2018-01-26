@@ -36,7 +36,7 @@ function changeFileServerData($server_id,$status,$space){
 function refreshServerStatus(){
     $servers = getAllFileServers();
     foreach ($servers as &$server){
-        $result = sendRequest("{$server['path']}/serverStatus",'GET',null,null);
+        $result = sendRequestJSON("{$server['path']}/serverStatus",'GET',null,null);
         if ($result['status'] == 'ok'){
             $server['status'] = 1;
             $server['free_disk_space'] = $result['free_disk_space'];
@@ -68,9 +68,6 @@ function getAllServersFiles(){
     $server_names = [];
     foreach ($servers as $server){
        $result = sendRequest("{$server['path']}/getAllFiles",'GET',null,null);
-       if ($result['status'] == 'error')
-           return false;
-       array_shift($result);
        $server_names[$server['path']] = $result;
     }
     return $server_names;
