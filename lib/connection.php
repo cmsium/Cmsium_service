@@ -42,3 +42,9 @@ function checkAuth(){
     }
     */
 }
+
+function throwException (array $exception){
+    header("App-Exception: {$exception['code']}");
+    ob_clean();
+    exit();
+}

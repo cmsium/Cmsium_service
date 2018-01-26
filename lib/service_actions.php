@@ -4,7 +4,7 @@ function chooseFileServer (){
     $file_servers = getAllFileServers();
     usort($file_servers,function ($a,$b) {return ($a['disk_space'] <=> $b['disk_space']);});
     $server =  array_shift($file_servers);
-    echo json_encode(["status"=>"ok","server"=>$server['path']]);
+    echo $server['path'];
     return;
 }
 
@@ -32,13 +32,11 @@ function moveFilePage($file_id,$path){
     $validator = Validator::getInstance();
     $file_id = $validator->Check('Md5Type',$file_id,[]);
     if ($file_id === false){
-        echo json_encode(["status" => "error", "message" => "Wrong file id format"]);
-        exit;
+        throwException(DATA_FORMAT_ERROR);
     }
     $path = $validator->Check('Path',$path,[]);
     if ($path === false){
-        echo json_encode(["status" => "error", "message" => "Wrong file path format"]);
-        return;
+        throwException(DATA_FORMAT_ERROR);
     }
     $host = Config::get('host_url');
     $servers = refreshServerStatus();
@@ -56,23 +54,21 @@ function moveFile($file_id,$from,$to){
     $validator = Validator::getInstance();
     $file_id = $validator->Check('Md5Type',$file_id,[]);
     if ($file_id === false){
-        echo json_encode(["status" => "error", "message" => "Wrong file id format"]);
-        exit;
+        throwException(DATA_FORMAT_ERROR);
     }
     $from = $validator->Check('Path',$from,[]);
     if ($from === false){
-        echo json_encode(["status" => "error", "message" => "Wrong file path format"]);
-        return;
+        throwException(DATA_FORMAT_ERROR);
     }
     $to = $validator->Check('Path',$to,[]);
     if ($to === false){
-        echo json_encode(["status" => "error", "message" => "Wrong file path format"]);
-        return;
+        throwException(DATA_FORMAT_ERROR);
     }
     $exp = explode('//',$from);
     $server = $exp[0];
     $path = $exp[1];
     $response = sendRequest("$server/moveFile?server=$to&file=$path",'GET',null,null);
+    //TODO no json
     switch ($response['status']){
         case 'error':
             echo json_encode(["status" => "error", "message" => $response['message']]);
@@ -85,9 +81,6 @@ function moveFile($file_id,$from,$to){
     switch ($response['status']) {
         case 'error':
             echo json_encode(["status" => "error", "message" => $response['message']]);
-            exit;
-        case 'ok':
-            echo json_encode(["status" => "ok", "message" => "File successfully moved"]);
             exit;
     }
 }
@@ -111,8 +104,7 @@ function getServerFiles($server){
     $validator = Validator::getInstance();
     $server = $validator->Check('Path',$server,[]);
     if ($server === false){
-        echo "Wrong server format";
-        exit;
+        throwException(DATA_FORMAT_ERROR);
     }
     $result = sendRequest("$server/getAllFiles",'GET',null,null);
     if ($result['status'] == 'error')
@@ -135,19 +127,15 @@ function addServer($name,$path){
     $validator = Validator::getInstance();
     $name = $validator->Check('Path',$name,[]);
     if ($name === false){
-        echo json_encode(["status" => "error", "message" => "Wrong server name format"]);
-        exit;
+        throwException(DATA_FORMAT_ERROR);
     }
     $path = $validator->Check('Path',$path,[]);
     if ($path === false){
-        echo json_encode(["status" => "error", "message" => "Wrong server id format"]);
-        exit;
+        throwException(DATA_FORMAT_ERROR);
     }
     if (!registerFileServer(null,['name'=>$name,'path'=>$path])){
-        echo json_encode(["status" => "error", "message" => "Server addition error"]);
-        exit;
+        throwException(ADD_SERVER_ERROR);
     }
-    echo json_encode(["status" => "ok", "message" => "Server addition success"]);
 }
 
 function addServerPage(){
@@ -171,13 +159,10 @@ function deleteServer($server_id){
     $validator = Validator::getInstance();
     $server_id = $validator->Check('Md5Type',$server_id,[]);
     if ($server_id === false){
-        echo json_encode(["status" => "ok", "message" => "Wrong server id format"]);
-        exit;
+        throwException(DATA_FORMAT_ERROR);
     }
-    if (unregisterFileServer($server_id)) {
-        echo json_encode(["status" => "ok", "message" => "Server successfully deleted"]);
-    } else {
-        echo json_encode(["status" => "error", "message" => "Server delete error"]);
+    if (!registerFileServer($server_id)) {
+        throwException(DELETE_SERVER_ERROR);
     }
 }
 
