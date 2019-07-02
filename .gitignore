@@ -1,5 +1,3 @@
 .idea
-servers/*
 config/config.ini
-support/refreshServerStatus.sh
-support/checkFilesConformity.sh
+

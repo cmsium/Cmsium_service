@@ -1,0 +1,88 @@
+{
+  "openapi": "3.0.2",
+  "info": {
+    "title": "Files service",
+    "description": "Files  service server",
+    "version": "1.0.0"
+  },
+  "paths": {
+    "/status": {
+      "description": "Get info about availible files servers",
+      "get": {
+        "tags": [
+          "Status"
+        ],
+        "summary": "Get file servers info",
+        "description": "Get info about availible files servers",
+        "operationId": "getStatus",
+        "responses": {
+          "200": {
+            "description": "File servers status info",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ServersInfo"
+                  }
+                },
+                "examples": {
+                  "file servers info": {
+                    "value": [
+                      {
+                        "id": 30,
+                        "priority": 0,
+                        "url": "http://file.server.local/"
+                      },
+                      {
+                        "id": 52,
+                        "priority": 15,
+                        "url": "http://file2.server.local/"
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "auth_token": []
+          }
+        ]
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "ServersInfo": {
+        "title": "Root Type for ServersInfo",
+        "description": "Info about file servers",
+        "type": "object",
+        "properties": {
+          "id": {
+            "format": "int32",
+            "type": "integer"
+          },
+          "priority": {
+            "format": "int32",
+            "type": "integer"
+          },
+          "url": {
+            "type": "string"
+          }
+        },
+        "example": "{\n    \"id\": 1,\n    \"priority\": 0,\n    \"url\": \"http://file.server.local/\"\n}"
+      }
+    },
+    "securitySchemes": {
+      "auth_token": {
+        "type": "apiKey",
+        "description": "Auth token for api",
+        "name": "X-Auth-Token",
+        "in": "header"
+      }
+    }
+  }
+}
