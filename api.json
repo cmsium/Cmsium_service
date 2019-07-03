@@ -2,7 +2,7 @@
   "openapi": "3.0.2",
   "info": {
     "title": "Files service",
-    "description": "Files  service server",
+    "description": "Files service server",
     "version": "1.0.0"
   },
   "paths": {
@@ -32,12 +32,12 @@
                       {
                         "id": 30,
                         "priority": 0,
-                        "url": "http://file.server.local/"
+                        "url": "http://file.server.local:8001/"
                       },
                       {
                         "id": 52,
                         "priority": 15,
-                        "url": "http://file2.server.local/"
+                        "url": "http://file2.server.local:8001/"
                       }
                     ]
                   }
@@ -73,7 +73,7 @@
             "type": "string"
           }
         },
-        "example": "{\n    \"id\": 1,\n    \"priority\": 0,\n    \"url\": \"http://file.server.local/\"\n}"
+        "example": "{\n    \"id\": 1,\n    \"priority\": 0,\n    \"url\": \"http://file.server.local:8001/\"\n}"
       }
     },
     "securitySchemes": {
