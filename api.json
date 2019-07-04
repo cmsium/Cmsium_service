@@ -32,12 +32,12 @@
                       {
                         "id": 30,
                         "priority": 0,
-                        "url": "http://file.server.local:8001/"
+                        "url": "http://file.server.local:8000/"
                       },
                       {
                         "id": 52,
                         "priority": 15,
-                        "url": "http://file2.server.local:8001/"
+                        "url": "http://file2.server.local:8000/"
                       }
                     ]
                   }
@@ -73,7 +73,7 @@
             "type": "string"
           }
         },
-        "example": "{\n    \"id\": 1,\n    \"priority\": 0,\n    \"url\": \"http://file.server.local:8001/\"\n}"
+        "example": "{\n    \"id\": 1,\n    \"priority\": 0,\n    \"url\": \"http://file.server.local:8000/\"\n}"
       }
     },
     "securitySchemes": {
