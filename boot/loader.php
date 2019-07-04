@@ -38,7 +38,7 @@ $table->column('ip', swoole_table::TYPE_STRING, 16);
 $table->column('port', swoole_table::TYPE_INT, 6);
 $table->column('url', swoole_table::TYPE_STRING, 255);
 $table->column('status', swoole_table::TYPE_INT, 1);
-$table->column('space', swoole_table::TYPE_INT, 20);
+$table->column('space', swoole_table::TYPE_FLOAT);
 $table->column('workload', swoole_table::TYPE_INT, 11);
 $table->create();
 $application->file_servers = $table;
@@ -58,6 +58,10 @@ foreach (HELPERS as $helperFile) {
 // Create file manager
 $manager = new App\FileServersManager($application->mysql, $application->file_servers);
 $application->file_servers_manager = $manager;
+
+// Create priority handler
+$priority = new \App\FilesPriorityHandler();
+$application->priority_handler = $priority;
 
 // Save servers data from db to swoole table
 $application->registerStartupCallback(function() use ($manager){

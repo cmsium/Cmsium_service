@@ -17,6 +17,11 @@ class FileServer {
     public $data;
 
     public function __construct(array $data, $db = null, $table = null) {
+        $data['id'] = (int)$data['id'];
+        $data['port'] = (int)$data['port'];
+        $data['status'] = (bool)$data['status'];
+        $data['space'] = (int)$data['space'];
+        $data['workload'] = (int)$data['workload'];
         $this->data = $data;
         if ($db){
             $this->db = $db;

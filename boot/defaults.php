@@ -22,4 +22,4 @@ define("HELPERS", [
 
 define("EX_TYPES",['diff']);
 
-define("STATUS_FETCH_TIME", 1);//ms
+define("STATUS_FETCH_TIME", 1000*60);//ms

@@ -12,11 +12,6 @@ class FileServersManager {
 
     public $table;
 
-    public $priorities = [
-        'status' => ['weight' => 0.7, 'min' => 0, 'max' => 1],
-        'space' => ['weight' => 0.1, 'min' => 0, 'max' => 1],
-    ];
-
     public function __construct($db = null, $table = null) {
         if ($db){
             $this->db = $db;
@@ -24,6 +19,23 @@ class FileServersManager {
         if ($table){
             $this->table = $table;
         }
+    }
+
+    public function getStatus(PriorityHandler $priority_handler) {
+        $server_scores = [];
+        foreach ($this->table as $server){
+            if ($server) {
+                $score = $priority_handler->getScore($server);
+                $server_scores[] = [$server['id'], $score];
+            }
+        }
+        usort($server_scores, function ($a, $b) {
+            return -($a[1] <=> $b[1]);
+        });
+        foreach ($server_scores as $key => &$value){
+            $value = ['id' => $value[0], 'priority' => $key, 'url' => $this->table[$value[0]]['url']];
+        }
+        return $server_scores;
     }
 
     public function dbConnect() {

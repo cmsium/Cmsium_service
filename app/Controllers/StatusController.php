@@ -13,6 +13,7 @@ class StatusController {
      * @description Get info about availible files servers
      */
     public function getStatus () {
-
+        $manager = app()->file_servers_manager;
+        return $manager->getStatus(app()->priority_handler);
     }
 }
